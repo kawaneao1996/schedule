@@ -137,6 +137,7 @@ DjangoのデータベースはSQLite
 	- APIを通じてPythonAnywhereがあなたのWebアプリケーションを提供するように設定する
    3) PythonAnywhere上のデータベースが、自分のPC上のデータベースとはまったく別物であることです。つまり、異なる投稿と管理者アカウントを持つことができます。 その結果、自分のコンピュータで行ったように、createsuperuserで管理者アカウントを初期化する必要があります。
       python manage.py createsuperuser
+4. これからローカルで作業をして、Git にpush、するとwebページに反映される。
 
 * <2022-04-10 日>
 ** Djangoのチュートリアル
