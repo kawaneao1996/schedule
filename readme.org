@@ -90,8 +90,30 @@ class Post(models.Model):
 1. webサーバーを立ち上げる
    python manage.py runserver
 
-2.  http://127.0.0.1:8000/admin/  にアクセス
-   
+2. http://127.0.0.1:8000/admin/  にアクセス
+
+3. 仮想環境で
+   python manage.py createsuperuser
+
+4. Gitを立ち上げる schedule/ 内で
+   git init
+
+5. .gitignore に
+
+   *.pyc
+   *~
+   /.vscode
+   __pycache__
+   myvenv
+   db.sqlite3
+   /static
+   .DS_Store
+
+   を記述
+
+6. git add --all
+
+7. 
 * <2022-04-10 日>
 ** Djangoのチュートリアル
 https://tutorial.djangogirls.org/ja/installation/#pythonanywhere
