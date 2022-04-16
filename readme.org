@@ -18,9 +18,6 @@ pythonのDjangoを使ってみようと思う。
    Django~=3.2.10
 5. pip install -r requirements.txt
 6. (PythonAnywhereに登録)
-   + API token : 1104921a25d7588ba485b770e447a764b4a58d6f
-   + account : Matuo0426
-   + password : googleに紐付け
 7. django-admin startproject mysite .
 8. （settings.pyの編集）
    1. TIME_ZONE = 'Asia/Tokyo'
@@ -46,74 +43,101 @@ DjangoのデータベースはSQLite
 
 ** アプリケーションの作成
 
-1. python3 -m venv myenv :仮想環境の構築
-2. source myenv/bin/activate :仮想環境の構築
-3. python manage.py startapp blog
-4. mysite/settings.py のINSTALLED_APPSに
-   'blog.apps.BlogConfig',
-   を追記
-5. blog/model.py を削除してコード記入
-#+BEGIN_SRC Python3
-from django.conf import settings
-from django.db import models
-from django.utils import timezone
+*** デプロイ
+
+1. 仮想環境構築
+   1) python3 -m venv myenv :仮想環境の構築
+   2) source myenv/bin/activate :仮想環境の構築
+   3) python manage.py startapp blog
+   4) mysite/settings.py のINSTALLED_APPSに
+      'blog.apps.BlogConfig',
+      を追記
+   5) blog/model.py を削除してコード記入
+      #+BEGIN_SRC Python3
+      from django.conf import settings
+      from django.db import models
+      from django.utils import timezone
 
 
-class Post(models.Model):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
-    text = models.TextField()
-    created_date = models.DateTimeField(default=timezone.now)
-    published_date = models.DateTimeField(blank=True, null=True)
+      class Post(models.Model):
+          author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+          title = models.CharField(max_length=200)
+          text = models.TextField()
+          created_date = models.DateTimeField(default=timezone.now)
+          published_date = models.DateTimeField(blank=True, null=True)
 
-    def publish(self):
-        self.published_date = timezone.now()
-        self.save()
+          def publish(self):
+               self.published_date = timezone.now()
+               self.save()
 
-    def __str__(self):
-        return self.title
-#+END_SRC
-1. ターミナルで新しいモデルをDjangoに知らせる
-   1) python manage.py makemigrations blog
+          def __str__(self):
+              return self.title
+       #+END_SRC
+   6) ターミナルで新しいモデルをDjangoに知らせる
+   7) python manage.py makemigrations blog
 
-2. python manage.py migrate blog
+   8) python manage.py migrate blog
 
-3. 作成したポストを追加、編集、削除するのにdjango adminを使う
-   blog/admin.py に以下を記述
-   #+BEGIN_SRC
-   from django.contrib import admin
-   from .models import Post
+   9) 作成したポストを追加、編集、削除するのにdjango adminを使う
+      blog/admin.py に以下を記述
+      #+BEGIN_SRC
+      from django.contrib import admin
+      from .models import Post
 
-   admin.site.register(Post)
-   #+END_SRC
+      admin.site.register(Post)
+      #+END_SRC
    
-1. webサーバーを立ち上げる
-   python manage.py runserver
+   10) webサーバーを立ち上げる
+       python manage.py runserver
 
-2. http://127.0.0.1:8000/admin/  にアクセス
+   11) http://127.0.0.1:8000/admin/  にアクセス
 
-3. 仮想環境で
-   python manage.py createsuperuser
+   12) 仮想環境で
+       python manage.py createsuperuser
 
-4. Gitを立ち上げる schedule/ 内で
-   git init
+2. Gitの作業
 
-5. .gitignore に
+   1) Gitを立ち上げる schedule/ 内で
+      git init
 
-   *.pyc
-   *~
-   /.vscode
-   __pycache__
-   myvenv
-   db.sqlite3
-   /static
-   .DS_Store
+   2) .gitignore に
 
-   を記述
+      *.pyc
+      *~
+      /.vscode
+      __pycache__
+      myvenv
+      db.sqlite3
+      /static
+      .DS_Store
 
-6. git add --all
+      を記述
 
-7. 
+   3) git add --all
+
+   4) git commit -m "My schedule app, first commit"
+
+   5) git remote add origin [URL]
+
+   6) git push -u origin master :gitの作業ここまで
+
+3. PythonAnywhereの設定
+
+   1) PythonAnywhereのbashコンソールに以下を入力：
+      pip3 install --user pythonanywhere
+
+   2) pa_autoconfigure_django.py --python=3.6 [Github URL]
+
+      + やっていること      
+	- GitHubからコードをダウンロードする
+	- ちょうどあなたのPC上でやったように、PythonAnywhere上に仮想環境 を作成する
+	- 一部のデプロイメント設定で設定ファイルを更新する
+	- manage.py migrateコマンドを使ってPythonAnywhere上のデータベースをセットアップする
+	- 静的ファイルの設定（これについては後で学習します）
+	- APIを通じてPythonAnywhereがあなたのWebアプリケーションを提供するように設定する
+   3) PythonAnywhere上のデータベースが、自分のPC上のデータベースとはまったく別物であることです。つまり、異なる投稿と管理者アカウントを持つことができます。 その結果、自分のコンピュータで行ったように、createsuperuserで管理者アカウントを初期化する必要があります。
+      python manage.py createsuperuser
+
 * <2022-04-10 日>
 ** Djangoのチュートリアル
 https://tutorial.djangogirls.org/ja/installation/#pythonanywhere
