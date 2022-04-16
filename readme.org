@@ -80,7 +80,7 @@ class Post(models.Model):
 
 3. 作成したポストを追加、編集、削除するのにdjango adminを使う
    blog/admin.py に以下を記述
-   #+START_SRC
+   #+BEGIN_SRC
    from django.contrib import admin
    from .models import Post
 
