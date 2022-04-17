@@ -42,7 +42,6 @@ pythonのDjangoを使ってみようと思う。
 DjangoのデータベースはSQLite
 
 ** アプリケーションの作成
-
 *** デプロイ
 
 1. 仮想環境構築
@@ -80,7 +79,7 @@ DjangoのデータベースはSQLite
 
    9) 作成したポストを追加、編集、削除するのにdjango adminを使う
       blog/admin.py に以下を記述
-      #+BEGIN_SRC
+      #+BEGIN_SRC python
       from django.contrib import admin
       from .models import Post
 
@@ -138,8 +137,66 @@ DjangoのデータベースはSQLite
    3) PythonAnywhere上のデータベースが、自分のPC上のデータベースとはまったく別物であることです。つまり、異なる投稿と管理者アカウントを持つことができます。 その結果、自分のコンピュータで行ったように、createsuperuserで管理者アカウントを初期化する必要があります。
       python manage.py createsuperuser
 4. これからローカルで作業をして、Git にpush、するとwebページに反映される。
+*** Django URL の設定
+   1. 投稿したブログポストのリストを表示するようにしたいと思います。
+     
+      mysite/urls.py に以下を記述
+      #+BEGIN_SRC python
+	from django.contrib import admin
+	from django.urls import path, include
 
-* <2022-04-10 日>
+	urlpatterns = [
+            path('admin/', admin.site.urls),
+            path('', include('blog.urls')),
+	]
+      #+END_SRC
+      これでDjangoは'http://127.0.0.1:8000/' に来たリクエストは blog.urls へリダイレクトするようになり、それ以降はそちらを参照するようになります。
+
+   2. blog ディレクトリの下に、新しく urls.py という空のファイルを作って、コードエディタで開いて下さい。そして最初の2行を以下のように書きます：
+      #+BEGIN_SRC python
+	from django.urls import path
+	from . import views
+	urlpatterns = [
+            path('', views.post_list, name='post_list'),
+        ]
+      #+END_SRC
+
+   3. python manage.py runserverを実行してWebサーバーを再起動します。
+
+*** blog/views.py の設定
+ビュー はアプリのロジックを書いていくところです。 ビューは、以前あなたが作った モデル に情報を要求し、それを テンプレート に渡します。 テンプレートは、次の章で作ります。 ビューはただのPythonの関数です。Python入門の章で書いたものよりもちょっと複雑なだけですよ。
+
+ビューは、views.py に記述します。私たちの場合 blog/views.py に書くことになります。
+
+1. blog/views.py に以下を記述
+   #+BEGIN_SRC python
+     from django.shortcuts import render
+     def post_list(request):
+         return render(request, 'blog/post_list.html', {})
+   #+END_SRC
+*** テンプレート作成
+テンプレートは、blog/templates/blogディレクトリに保存されています。 それでは、最初に、自分のblogディレクトリの中にtemplatesという名前のディレクトリを作成してください。 次に、自分のtemplatesディレクトリの中にblogという名前のディレクトリを作ります。
+なぜ、両方ともblogという名前の付いたディレクトリを2つ作成する必要があるのか不思議に思う人もいるかもしれません。あとで分かると思いますが、簡単に言うと、これは、もっと複雑なことをやろうとした時に、それが楽にできるようにしてくれる便利な命名法なのです。）
+
+それでは、blog/templates/blogディレクトリの中に、post_list.htmlファイル(とりあえず何も書かれていないファイルにしておきます)を作成しましょう。
+
+そして適当にHTMLを書く。
+#+begin_src bash
+  git add --all .
+  git status
+  git commit -m "[message]"
+  git push
+#+end_src
+
+PythonAnywhereのコンソールページを開き、Bash コンソールに移動
+
+#+begin_src bash
+  cd ~/<your-pythonanywhere-domain>.pythonanywhere.com
+  git pull
+#+end_src
+webページに移動してreload
+
+* URL
 ** Djangoのチュートリアル
 https://tutorial.djangogirls.org/ja/installation/#pythonanywhere
 
