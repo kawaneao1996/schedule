@@ -267,7 +267,6 @@ titleで絞り込む場合は以下のようにする。
 #+begin_src bash
   Post.objects.order_by('-created_date')
 #+end_src
-#+begin_quote
 ちなみにpostに<Post: ~ >は取得できたがPost.objects.filter(published_data__lte=timezone.now()) は実行しても<QuerySet []>しか出て来なかった。。
 コンソールから抜けるには
 #+begin_src
