@@ -30,7 +30,18 @@ pythonのDjangoを使ってみようと思う。
      import os
      を追記
 10. python3 manage.py runserver
-    
+** 仮想環境の実行
+ターミナルで
+#+begin_src bash
+  python3 -m venv myenv
+  source myenv/bin/activate
+  python -m pip install --upgrade pip
+  pip install -r requirements.txt
+#+end_src
+   サーバーを起動
+ #+begin_src
+        python3 manage.py runserver
+    #+end_src
 * コンテンツを作る
 オブジェクト指向とは、実際のものをプロパティ（オブジェクト・プロパティ）とメソッドを使って
 表現する方法。
@@ -195,8 +206,75 @@ PythonAnywhereのコンソールページを開き、Bash コンソールに移�
   git pull
 #+end_src
 webページに移動してreload
+*** DjangoのORMとクエリセット
+Djangoのデータベース接続方法と、データの格納について
+クエリセットが何かと言うと、モデルのオブジェクトのリストのことです。クエリセットを使って、データベースからデータを読み込んだり、抽出したり、並べ替えたりできます。
+ターミナルで仮想環境を立ち上げて
+#+begin_src bash
+  python3 manage.py shell
+#+end_src
+この立ち上がったコンソールで以下を実行
+#+begin_src bash
+  from blog.models import Post
+  Post.objects.all()
+#+end_src
+すると過去のポストが表示される。
+このコンソールから新しいポストを作ることができる。
+ユーザーの確認をする
+#+begin_src bash
+  from django.contrib.auth.models import User
+  User.objects.all()
+#+end_src
+次にユーザーのインスタンスをmeに代入する。
+#+begin_src bash
+  me = User.objects.get(username='username')
+#+end_src
+ポストは以下をコンソールに入力
+#+begin_src bash
+  Post.objects.create(author=me, title='Sample title', text='Test')
+#+end_src
 
-* URL
+ポストは
+#+begin_src bash
+  Post.objects.all()
+#+end_src
+で確認できる。
+クエリセットの機能の大部分は抽出。あるユーザーのポストを抽出する場合は以下のようにする。
+#+begin_src bash
+  Post.objects.filter(author=usr)
+#+end_src
+usrにはユーザーのインスタンスを入れる。
+titleで絞り込む場合は以下のようにする。
+#+begin_src bash
+  Post.objects.filter(title__contains='title')
+#+end_src
+ポストを公開する。
+#+begin_src bash
+  post = Post.objects.get(title="Sample title")
+  post.publish()
+#+end_src
+公開済みのポストは次のように取り出す。
+#+begin_src bash
+  from django.utils import timezone
+  Post.objects.filter(published_data__lte=timezone.now())
+#+end_src
+参考元ではpublished_dateだがpublished_dataが正解。
+オブジェクトのリストの並び替え
+#+begin_src bash
+  Post.objects.order_by('created_date')
+#+end_src
+新しく追加した順番に並べるには（ハイフン）-を使う
+#+begin_src bash
+  Post.objects.order_by('-created_date')
+#+end_src
+#+begin_quote
+ちなみにpostに<Post: ~ >は取得できたがPost.objects.filter(published_data__lte=timezone.now()) は実行しても<QuerySet []>しか出て来なかった。。
+コンソールから抜けるには
+#+begin_src
+  exit()
+#+end_src
+* 参考
+** URL
 ** Djangoのチュートリアル
 https://tutorial.djangogirls.org/ja/installation/#pythonanywhere
 
